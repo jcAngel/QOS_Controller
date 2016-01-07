@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<input xmlns="urn:opendaylight:flow:service">
+   <barrier>false</barrier>
+   <node xmlns:inv="urn:opendaylight:inventory">/inv:nodes/inv:node[inv:id=switchID]</node>
+   <flags>SEND_FLOW_REM</flags>
+   <match>
+        
+   </match>
+   <priority>100</priority>
+   <strict>false</strict>
+   <table_id>0</table_id>
+</input>
