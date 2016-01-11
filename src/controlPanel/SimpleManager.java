@@ -73,10 +73,11 @@ public class SimpleManager implements MainManagerInterface {
         flowManager.installARP(inventoryManager.getSwitches());
     }
 
-    private void printFlows() {
-        int index = 0;
-        for (FlowInfo info : flowManager.getFlowList()) {
-            System.out.println("No. " + (++index) + " Flow Info: {");
+    private void printFlows(BufferedReader br) throws Exception {
+        ArrayList<FlowInfo> flows = flowManager.getFlowList();
+        for (int i = 0; i < flows.size(); i++) {
+            System.out.println("No. " + (i + 1) + " Flow Info: {");
+            FlowInfo info = flows.get(i);
             System.out.println("\tSwitchID: " + info.switchID + ", TableID: " + info.tableID + ", FlowID: " + info.flowID);
             if (info.srcIP != null && info.srcIP.length() > 0)
                 System.out.println("\tsrcIP:" + info.srcIP);
@@ -86,6 +87,17 @@ public class SimpleManager implements MainManagerInterface {
                 System.out.println("\tethType: " + info.ethType);
             System.out.println("}");
         }
+
+        System.out.println("\nPlease Input the flow num you want to delete.");
+        String input=br.readLine();
+        int x = Integer.parseInt(input);
+        if (x <= 0 || x > flows.size()) {
+            System.out.println("Invalid flow num.");
+            return;
+        }
+
+        FlowInfo delInfo = flows.get(x);
+        flowManager.deleteFlow(delInfo);
     }
 
     public void start() {
@@ -114,12 +126,8 @@ public class SimpleManager implements MainManagerInterface {
                     addFlow(br);
                 else if (input.contains("4") || input.contains("install arp flood"))
                     installARP();
-                else if (input.contains("5") || input.contains("delete one flow")) {
-                    printFlows();
-
-
-                }
-
+                else if (input.contains("5") || input.contains("delete one flow"))
+                    printFlows(br);
                 else if (input.contains("6") || input.contains("clear all flows")) {
                     flowManager.deleteAll();
                     meterManager.deleteAll();
