@@ -144,25 +144,33 @@ public class SimpleManager implements MainManagerInterface {
     }
 
     private void clearAll() {
-        String deletexml = "";
+        String deletexml = "", addxml = "";
         try {
             File file = new File("sources/deleteflow.xml");
+            File addFile = new File("sources/addflow.xml");
             FileReader fileReader = new FileReader(file);
+            FileReader addFileReader = new FileReader(addFile);
 
             BufferedReader bufferedReader = new BufferedReader(fileReader);
+            BufferedReader addBufferedReader = new BufferedReader(addFileReader);
 
             String tmp;
-            while((tmp = bufferedReader.readLine()) != null) {
+            while ((tmp = bufferedReader.readLine()) != null) {
                 deletexml = deletexml + tmp;
             }
             bufferedReader.close();
 
+            while ((tmp = addBufferedReader.readLine()) != null) {
+                addxml = addxml + tmp;
+            }
+            addBufferedReader.close();
+
             ArrayList<Switch> switches = inventoryManager.getSwitches();
             for (Switch switchid : switches) {
                 String realXML = deletexml.replace("switchID", "\"" + switchid.name + "\"");
-                //System.out.println(realXML);
                 String info = connector.postXMLToURL("http://127.0.0.1:8181/restconf/operations/sal-flow:remove-flow", realXML);
-                //System.out.println(info);
+                //System.out.println(addxml);
+                info = connector.putFlow(switchid.name, "0", "1", addxml);
             }
 
         }

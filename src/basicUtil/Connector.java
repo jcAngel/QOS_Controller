@@ -114,7 +114,7 @@ public class Connector {
         return ans;
     }
 
-    private String putXMLToURL(String url, String xml) {
+    public String putXMLToURL(String url, String xml) {
         URL baseURL;
         try {
             baseURL = new URL(url);

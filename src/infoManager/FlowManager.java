@@ -16,6 +16,7 @@ public class FlowManager {
     HashSet<FlowInfo> flowList;
     MeterManager meterManager;
     Connector connector;
+    final int startFlowID = 1;
 
     HashMap<String, HashMap<String, Integer>> availableFlowID;
 
@@ -43,7 +44,7 @@ public class FlowManager {
             table = new HashMap<String, Integer>();
             availableFlowID.put(switchID, table);
         }
-        int x = 0;
+        int x = startFlowID;
         if (table.containsKey(tableID)) x = table.get(tableID);
         else table.put(tableID, x);
         return x + 1;
@@ -56,7 +57,7 @@ public class FlowManager {
             table = new HashMap<String, Integer>();
             availableFlowID.put(switchID, table);
         }
-        int now = 0;
+        int now = startFlowID;
         if (table.containsKey(tableID)) now = table.get(tableID);
         else {
             table.put(tableID, now);
@@ -80,13 +81,6 @@ public class FlowManager {
         updateAvailableFlowID(info.switchID, info.tableID, info.flowID);
 
         FlowConstructor flow = new FlowConstructor(info.priority, 0, 0, info.name, info.tableID, info.flowID);
-//        FlowConstructor flow = new FlowConstructor();
-//        flow.setPriority(info.priority);
-//        flow.setHardTimeout(0);
-//        flow.setIdleTimeout(0);
-//        flow.setFlowName(info.name);
-//        flow.setFlowID(info.flowID);
-//        flow.setTableID(info.tableID);
         flow.setEthType(info.ethType);
         if (info.srcIP.length() > 0) flow.setIpv4Src(info.srcIP);
         if (info.dstIP.length() > 0) flow.setIpv4Dst(info.dstIP);
@@ -177,12 +171,7 @@ public class FlowManager {
         flow.setEthType(2054);
         String[] str = {"output-action", "output-node-connector", ""};
         int actOrder = 0;
-        for (SwitchPort port : switchID.getPortLinkedHost()) {
-            str[2] = Integer.toString(port.port);
-            flow.setAction(0, actOrder++, str);
-        }
-
-        for (SwitchPort port : switchID.getPortsLinkedSwitch()) {
+        for (SwitchPort port : switchID.getPorts()) {
             str[2] = Integer.toString(port.port);
             flow.setAction(0, actOrder++, str);
         }
@@ -213,7 +202,7 @@ public class FlowManager {
                         try {
                             info = getFlowInfo(flow, switchID, tableID);
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            //e.printStackTrace();
                             System.err.println("Cannot analyze flow:" + flow + " ------ FlowManager");
                         }
                         if (info != null) {
@@ -232,8 +221,9 @@ public class FlowManager {
     public void deleteAll() {
         getUpdate();
         for (FlowInfo flow : flowList) {
+            if (flow.tableID.equals("0") && flow.flowID.equals("1")) continue;
             String str = connector.deleteFlow(flow.switchID, flow.tableID, flow.flowID);
-            System.err.println(str);
+            //System.err.println(str + "hahahaha");
         }
         availableFlowID.clear();
     }
@@ -265,34 +255,38 @@ public class FlowManager {
             System.err.println("This flow does not have ethType ------ FlowManager");
         }
 
-        JSONArray instructions = flow.getJSONObject("instructions").getJSONArray("instruction");
-
         ArrayList<String> outPorts = new ArrayList<String>();
         MeterInfo meter = null;
-        for (int i = 0; i < instructions.length(); i++) {
-            JSONObject tmp = instructions.getJSONObject(i);
-            try {
-                JSONObject actions = tmp.getJSONObject("apply-actions");
-                JSONArray actionList = actions.getJSONArray("action");
-                for (int j = 0; j < actionList.length(); j++) {
-                    JSONObject output = actionList.getJSONObject(j);
-                    String port = "";
-                    port = output.getJSONObject("output-action").getString("output-node-connector");
-                    outPorts.add(port);
-                }
-            } catch (Exception e) {
-                JSONObject meterField = null;
+        try {
+            JSONArray instructions = flow.getJSONObject("instructions").getJSONArray("instruction");
+
+            for (int i = 0; i < instructions.length(); i++) {
+                JSONObject tmp = instructions.getJSONObject(i);
                 try {
-                    meterField = tmp.getJSONObject("meter");
-                } catch (Exception es) {
-                    System.err.println("This action does not have output port and meter ------ FlowManager");
-                }
-                if (meterField != null) {
-                    Integer meterID = meterField.getInt("meter-id");
-                    System.out.println(meterID.toString());
-                    meter = meterManager.getMeter(switchID, meterID.toString());
+                    JSONObject actions = tmp.getJSONObject("apply-actions");
+                    JSONArray actionList = actions.getJSONArray("action");
+                    for (int j = 0; j < actionList.length(); j++) {
+                        JSONObject output = actionList.getJSONObject(j);
+                        String port = "";
+                        port = output.getJSONObject("output-action").getString("output-node-connector");
+                        outPorts.add(port);
+                    }
+                } catch (Exception e) {
+                    JSONObject meterField = null;
+                    try {
+                        meterField = tmp.getJSONObject("meter");
+                    } catch (Exception es) {
+                        System.err.println("This action does not have output port and meter ------ FlowManager");
+                    }
+                    if (meterField != null) {
+                        Integer meterID = meterField.getInt("meter-id");
+                        System.out.println(meterID.toString());
+                        meter = meterManager.getMeter(switchID, meterID.toString());
+                    }
                 }
             }
+        } catch (Exception e) {
+
         }
 
 

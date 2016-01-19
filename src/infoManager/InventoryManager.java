@@ -48,9 +48,11 @@ public class InventoryManager {
                 for (int j = 0; j < nodeConnectors.length(); j++) {
                     JSONObject nodeConnector = nodeConnectors.getJSONObject(j);
                     try {
-                        JSONObject hostTracker = nodeConnector.getJSONArray("address-tracker:addresses").getJSONObject(0);
                         int switchPort = Integer.parseInt(nodeConnector.getString("id").split(":")[2]);
+                        //System.out.println("Switch port:" + switchPort);
                         SwitchPort port = newSwitch.addPort(switchPort);
+
+                        JSONObject hostTracker = nodeConnector.getJSONArray("address-tracker:addresses").getJSONObject(0);
                         String hostID = Integer.toString(hostTracker.getInt("id"));
                         String hostIP = hostTracker.getString("ip");
 

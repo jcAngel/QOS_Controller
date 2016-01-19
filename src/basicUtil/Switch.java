@@ -1,7 +1,7 @@
 package basicUtil;
 
 import java.util.HashMap;
-import java.util.Set;
+import java.util.HashSet;
 
 /**
  * Created by jiachen on 28/12/15.
@@ -9,8 +9,8 @@ import java.util.Set;
 public class Switch {
     public String name;
     public HashMap<Integer, SwitchPort> ports;
-    public HashMap<SwitchPort, Pair<Switch, SwitchPort>> portLinkedSwitch;
-    public HashMap<SwitchPort, Host> portLinkedHost;
+    private HashMap<SwitchPort, Pair<Switch, SwitchPort>> portLinkedSwitch;
+    private HashMap<SwitchPort, Host> portLinkedHost;
 
     public Switch(String name) {
         ports = new HashMap<Integer, SwitchPort>();
@@ -40,12 +40,29 @@ public class Switch {
         portLinkedHost.put(port, host);
     }
 
-    public Set<SwitchPort> getPortsLinkedSwitch() {
-        return portLinkedSwitch.keySet();
+    public HashSet<SwitchPort> getPortsLinkedSwitch() {
+        HashSet<SwitchPort> ans = new HashSet<SwitchPort>();
+        for (SwitchPort port : portLinkedSwitch.keySet()) {
+            ans.add(port);
+        }
+        return ans;
     }
 
-    public Set<SwitchPort> getPortLinkedHost() {
-        return portLinkedHost.keySet();
+    public HashSet<SwitchPort> getPortLinkedHost() {
+        HashSet<SwitchPort> ans = new HashSet<SwitchPort>();
+        for (SwitchPort port : portLinkedHost.keySet()) {
+            ans.add(port);
+        }
+        return ans;
+    }
+
+    public HashSet<SwitchPort> getPorts() {
+        HashSet<SwitchPort> ans = new HashSet<SwitchPort>();
+        for (int x : ports.keySet()) {
+            SwitchPort port = ports.get(x);
+            ans.add(port);
+        }
+        return ans;
     }
 
     public Pair<Switch, SwitchPort> getLinkedSwitch(SwitchPort outPort) {
