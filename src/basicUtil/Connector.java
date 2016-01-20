@@ -79,7 +79,7 @@ public class Connector {
         try {
             baseURL = new URL(url);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             return "Connection Error At getAll.";
         }
         HttpURLConnection httpURLConnection = null;
@@ -118,9 +118,9 @@ public class Connector {
         URL baseURL;
         try {
             baseURL = new URL(url);
-            System.out.println(baseURL.toString());
+            //System.out.println(baseURL.toString());
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             return "Connection Error At putFlow.";
         }
         HttpURLConnection httpURLConnection = null;
@@ -154,9 +154,9 @@ public class Connector {
         URL baseURL;
         try {
             baseURL = new URL(url);
-            System.out.println(baseURL.toString());
+            //System.out.println(baseURL.toString());
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             return "Connection Error At putFlow.";
         }
         HttpURLConnection httpURLConnection = null;

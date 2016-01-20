@@ -14,12 +14,14 @@ public class SimpleShare implements OptimizationInterface {
 
     HashMap<String, ArrayList<FlowInfo>> flowsOnPorts;
     MainManagerInterface parent;
+    HashMap<FlowFeature, Route> routeStore;
 
     final int linkBandWidth = 200000;
 
     public SimpleShare(MainManagerInterface parent) {
         this.parent = parent;
         flowsOnPorts = new HashMap<String, ArrayList<FlowInfo>>();
+        routeStore = new HashMap<>();
     }
 
     @Override
@@ -29,7 +31,11 @@ public class SimpleShare implements OptimizationInterface {
 
     @Override
     public NeedModifyList addNewFlow(FlowFeature feature) {
+        if (routeStore.containsKey(feature)) return new NeedModifyList();
+
         Route route = findRoute(feature.srcIP, feature.dstIP);
+
+        routeStore.put(feature, route);
 
         NeedModifyList result = new NeedModifyList();
 
@@ -48,16 +54,66 @@ public class SimpleShare implements OptimizationInterface {
             MeterInfo meter = addMeter(node.switchNode.name, realBand);
             FlowInfo flow = addFlow(node.switchNode.name, feature.srcIP + "/32", feature.dstIP + "/32", node.outPort, 2048);
             flow.setLinkedMeter(meter);
-            result.addFlow(flow);
+            result.addModifyFlow(flow);
             result.addMeter(meter);
-            relatedFlow.add(flow);
 
             for (FlowInfo info : relatedFlow) {
                 meter = null;
                 if (info.linkedMeter == null) {
                     meter = addMeter(node.switchNode.name, realBand);
                     info.setLinkedMeter(meter);
-                    result.addFlow(info);
+                    result.addModifyFlow(info);
+                    result.addMeter(meter);
+                }
+                else {
+                    meter = info.linkedMeter;
+                    meter.bandWidth = realBand;
+                    result.addMeter(meter);
+                }
+            }
+
+            relatedFlow.add(flow);
+        }
+
+        return result;
+    }
+
+    @Override
+    public NeedModifyList deleteFlow(FlowFeature feature) {
+        if (!routeStore.containsKey(feature)) {
+            System.err.println("Cannot find this flow.");
+            return new NeedModifyList();
+        }
+
+        Route route = routeStore.get(feature);
+        System.out.println(route.size());
+        NeedModifyList result = new NeedModifyList();
+
+        for (int i = 0; i < route.size(); i++) {
+            RouteNode node = route.get(i);
+            SwitchPort outPort = node.outPort;
+            ArrayList<FlowInfo> relatedFlow = flowsOnPorts.get(outPort.container.name + ":" + outPort.port);
+            if (relatedFlow == null) {
+                System.err.println("Error: there is no related flow on " + outPort.container.name + ":" + outPort.port);
+                continue;
+            }
+            //System.out.println(relatedFlow.size());
+            int realBand = 0;
+            if (relatedFlow.size() > 1)
+                realBand = linkBandWidth / (relatedFlow.size() - 1);
+
+            for (FlowInfo info : relatedFlow) {
+                System.out.println("Related Flow:" + info.srcIP + " - " + info.dstIP);
+                if (info.srcIP.equals(feature.srcIP + "/32") && info.dstIP.equals(feature.dstIP + "/32")) {
+                    result.addDeleteFlow(info);
+                    continue;
+                }
+
+                MeterInfo meter = null;
+                if (info.linkedMeter == null) {
+                    meter = addMeter(node.switchNode.name, realBand);
+                    info.setLinkedMeter(meter);
+                    result.addModifyFlow(info);
                     result.addMeter(meter);
                 }
                 else {
@@ -69,6 +125,12 @@ public class SimpleShare implements OptimizationInterface {
         }
 
         return result;
+    }
+
+    @Override
+    public void clearAll() {
+        flowsOnPorts.clear();
+        routeStore.clear();
     }
 
     private FlowInfo addFlow(String switchID, String src, String dst, SwitchPort outPort, int ethType) {

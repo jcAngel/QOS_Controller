@@ -24,12 +24,12 @@ public class SimpleManager implements MainManagerInterface {
     public SimpleManager() {
         connector = new Connector();
         inventoryManager = new InventoryManager(connector);
-        clearAll();
         meterManager = new MeterManager(connector);
         flowManager = new FlowManager(connector);
         flowManager.setMeterManager(meterManager);
-        flowManager.deleteAll();
-        meterManager.deleteAll();
+        clearAll();
+        //flowManager.deleteAllExceptDefault();
+        //meterManager.deleteAll();
 
         optManager = new SimpleShare(this);
 
@@ -53,20 +53,39 @@ public class SimpleManager implements MainManagerInterface {
             meterManager.addMeter(info);
         }
 
-        for (int i = 0; i < list.flowSize(); i++) {
-            FlowInfo info = list.getFlow(i);
+        for (int i = 0; i < list.modifyFlowListSize(); i++) {
+            FlowInfo info = list.getModifyFlow(i);
             flowManager.addFlow(info);
         }
     }
 
     private void deleteFlow(BufferedReader br) throws Exception {
-        String input = "";
-        System.out.println("Please input switchID, tableID, flowID of the flow which you want to delete."
-                + "(Seperated by space)");
-        input=br.readLine();
-        String[] tmp = input.split(" ");
-        FlowInfo flow = flowManager.getFlow(tmp[0], tmp[1], tmp[2]);
-        flowManager.deleteFlow(flow);
+        System.out.println("Please Input the flow you want to delete, input like A.B.C.D - X.Y.Z.W");
+        String input=br.readLine();
+        input = input.replace(" ", "");
+        String src = input.split("-")[0];
+        String dst = input.split("-")[1];
+        FlowFeature feature = new FlowFeature(src, dst);
+
+        NeedModifyList list = optManager.deleteFlow(feature);
+        list.print();
+
+        for (int i = 0; i < list.meterSize(); i++) {
+            MeterInfo info = list.getMeter(i);
+            meterManager.addMeter(info);
+        }
+
+        for (int i = 0; i < list.modifyFlowListSize(); i++) {
+            FlowInfo info = list.getModifyFlow(i);
+            flowManager.addFlow(info);
+        }
+
+        for (int i = 0; i < list.deleteFlowListSize(); i++) {
+            FlowInfo info = list.getDeleteFlow(i);
+            flowManager.deleteFlow(info);
+            if (info.linkedMeter != null)
+                meterManager.deleteMeter(info.linkedMeter);
+        }
     }
 
     private void installARP() {
@@ -87,17 +106,6 @@ public class SimpleManager implements MainManagerInterface {
                 System.out.println("\tethType: " + info.ethType);
             System.out.println("}");
         }
-
-        System.out.println("\nPlease Input the flow num you want to delete.");
-        String input=br.readLine();
-        int x = Integer.parseInt(input);
-        if (x <= 0 || x > flows.size()) {
-            System.out.println("Invalid flow num.");
-            return;
-        }
-
-        FlowInfo delInfo = flows.get(x);
-        flowManager.deleteFlow(delInfo);
     }
 
     public void start() {
@@ -113,8 +121,9 @@ public class SimpleManager implements MainManagerInterface {
                 System.out.println("\t2. Print Hosts");
                 System.out.println("\t3. Add new flow");
                 System.out.println("\t4. Install ARP flood");
-                System.out.println("\t5. Delete one flow");
+                System.out.println("\t5. Print all flows");
                 System.out.println("\t6. Clear all flows");
+                System.out.println("\t7. Delete flow");
                 input = br.readLine();
                 if (input == null) break;
                 input = input.toLowerCase();
@@ -133,6 +142,9 @@ public class SimpleManager implements MainManagerInterface {
                     meterManager.deleteAll();
                     clearAll();
                 }
+                else if (input.contains("7") || input.contains("delete flow")) {
+                    deleteFlow(br);
+                }
                 else {
                     System.err.println("Operation cannot supported.");
                 }
@@ -144,6 +156,9 @@ public class SimpleManager implements MainManagerInterface {
     }
 
     private void clearAll() {
+        if (flowManager != null) flowManager.deleteAll();
+        if (meterManager != null) meterManager.deleteAll();
+
         String deletexml = "", addxml = "";
         try {
             File file = new File("sources/deleteflow.xml");
@@ -171,6 +186,7 @@ public class SimpleManager implements MainManagerInterface {
                 String info = connector.postXMLToURL("http://127.0.0.1:8181/restconf/operations/sal-flow:remove-flow", realXML);
                 //System.out.println(addxml);
                 info = connector.putFlow(switchid.name, "0", "1", addxml);
+                //System.out.println(info);
             }
 
         }

@@ -12,4 +12,6 @@ import java.util.ArrayList;
 public interface OptimizationInterface {
     ArrayList<Route> initialOptimization();
     NeedModifyList addNewFlow(FlowFeature feature);
+    NeedModifyList deleteFlow(FlowFeature feature);
+    void clearAll();
 }

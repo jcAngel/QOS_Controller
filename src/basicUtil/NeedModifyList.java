@@ -6,37 +6,48 @@ import java.util.ArrayList;
  * Created by jiachen on 29/12/15.
  */
 public class NeedModifyList {
-    public ArrayList<FlowInfo> flowList;
-    public ArrayList<MeterInfo> meterList;
+    private ArrayList<FlowInfo> modifyFlowList, deleteFlowList;
+    private ArrayList<MeterInfo> meterList;
 
     public NeedModifyList() {
-        flowList = new ArrayList<>();
+        modifyFlowList = new ArrayList<>();
+        deleteFlowList = new ArrayList<>();
         meterList = new ArrayList<>();
     }
 
     public NeedModifyList(ArrayList<FlowInfo> flows, ArrayList<MeterInfo> meters) {
-        flowList = flows;
+        modifyFlowList = flows;
         meterList = meters;
     }
 
-    public void addFlow(FlowInfo info) {
-        flowList.add(info);
+    public void addModifyFlow(FlowInfo info) {
+        modifyFlowList.add(info);
     }
+
+    public void addDeleteFlow(FlowInfo info) { deleteFlowList.add(info); }
 
     public void addMeter(MeterInfo info) {
         meterList.add(info);
     }
 
-    public int flowSize() {
-        return flowList.size();
+    public int modifyFlowListSize() {
+        return modifyFlowList.size();
+    }
+
+    public int deleteFlowListSize() {
+        return deleteFlowList.size();
     }
 
     public int meterSize() {
         return meterList.size();
     }
 
-    public FlowInfo getFlow(int index) {
-        return flowList.get(index);
+    public FlowInfo getModifyFlow(int index) {
+        return modifyFlowList.get(index);
+    }
+
+    public FlowInfo getDeleteFlow(int index) {
+        return deleteFlowList.get(index);
     }
 
     public MeterInfo getMeter(int index) {
@@ -45,8 +56,8 @@ public class NeedModifyList {
 
     public void print() {
         int index = 0;
-        for (FlowInfo info : flowList) {
-            System.out.println("Flow " + (++index) + ":  {\n" +
+        for (FlowInfo info : modifyFlowList) {
+            System.out.println("Need Modify Flow " + (++index) + ":  {\n" +
                                     "\tSwitch: " + info.switchID + "\n" +
                                     "\tSourceIP: " + info.srcIP + "\n" +
                                     "\tDestinationIP: " + info.dstIP + "\n" +
@@ -60,6 +71,16 @@ public class NeedModifyList {
                                     "\tSwitch: " + info.switchID + "\n" +
                                     "\tMeterID: " + info.meterID + "\n" +
                                     "\tBandWidth:" + info.bandWidth + "\n}");
+        }
+
+        index = 0;
+        for (FlowInfo info: deleteFlowList) {
+            System.out.println("Need Delete Flow " + (++index) + ":  {\n" +
+                                    "\tSwitch: " + info.switchID + "\n" +
+                                    "\tSourceIP: " + info.srcIP + "\n" +
+                                    "\tDestinationIP: " + info.dstIP + "\n" +
+                                    "\tTable: " + info.tableID + ",  flowID: " + info.flowID + "\n" +
+                                    "\tMeter: " + info.linkedMeter.meterID + "\n}");
         }
     }
 }

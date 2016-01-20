@@ -61,7 +61,7 @@ public class MeterManager {
         meter.setMeterName(info.name);
         meter.setFlag("meter-kbps");
         meter.setMeterBandType(0, "ofpmbt-drop", info.bandWidth, 10000);
-        System.out.println(meter.getXMLString());
+        //System.out.println(meter.getXMLString());
         return connector.putMeter(info.switchID, info.meterID, meter.getXMLString());
     }
 
@@ -83,7 +83,7 @@ public class MeterManager {
                 JSONArray meterTables = node.getJSONArray("flow-node-inventory:meter");
                 for (int j = 0; j < meterTables.length(); j++) {
                     JSONObject meter = meterTables.getJSONObject(j);
-                    System.out.println(meter.toString());
+                    //System.out.println(meter.toString());
                     String meterID = meter.getInt("meter-id") + "";
                     int bandWidth = meter.getJSONObject("meter-band-headers")
                                          .getJSONArray("meter-band-header")
@@ -91,7 +91,7 @@ public class MeterManager {
                                          .getInt("drop-rate");
                     MeterInfo info = new MeterInfo(switchID + meterID, switchID, meterID, bandWidth);
                     meterList.add(info);
-                    System.out.println(info.toString());
+                    //System.out.println(info.toString());
                 }
             }
         } catch (Exception e) {

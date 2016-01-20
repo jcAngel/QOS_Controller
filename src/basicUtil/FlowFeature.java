@@ -11,4 +11,19 @@ public class FlowFeature {
         srcIP = src;
         dstIP = dst;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof FlowFeature) {
+            if (((FlowFeature) o).srcIP.equals(srcIP) && ((FlowFeature) o).dstIP.equals(dstIP))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        String ans = srcIP + dstIP;
+        return ans.hashCode();
+    }
 }

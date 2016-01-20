@@ -5,9 +5,8 @@ The functions of this controller:
 	2. Show all active hosts in network. 
 	3. Add a new flow to network.
 	4. Install ARP flood flows.
-	5. Delete a flow.
+	5. Print all flows.
 	6. Clear all flows.
+	7. Delete a flow.
 
-Version: Alpha
-
-Note: Still need debug.
+Version: 1.0

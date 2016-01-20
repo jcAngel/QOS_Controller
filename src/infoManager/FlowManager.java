@@ -118,7 +118,7 @@ public class FlowManager {
         flow.setMeter(0, meterID);
         String[] str = {"output-action", "output-node-connector", outPort};
         flow.setAction(1, 0, str);
-        System.out.println(flow.getXMLString());
+        //System.out.println(flow.getXMLString());
 
         ArrayList<String> outPorts = new ArrayList<>();
         outPorts.add(outPort);
@@ -139,7 +139,7 @@ public class FlowManager {
         flow.setIpv4Dst(dstIP);
         String[] str = {"output-action", "output-node-connector", outPort};
         flow.setAction(0, 0, str);
-        System.out.println(flow.getXMLString());
+        //System.out.println(flow.getXMLString());
 
         ArrayList<String> outPorts = new ArrayList<>();
         outPorts.add(outPort);
@@ -207,7 +207,7 @@ public class FlowManager {
                         }
                         if (info != null) {
                             flowList.add(info);
-                            System.out.println(info.toString());
+                            //System.out.println(info.toString());
                         }
                     }
                 }
@@ -218,12 +218,19 @@ public class FlowManager {
 
     }
 
-    public void deleteAll() {
+    public void deleteAllExceptDefault() {
         getUpdate();
         for (FlowInfo flow : flowList) {
             if (flow.tableID.equals("0") && flow.flowID.equals("1")) continue;
             String str = connector.deleteFlow(flow.switchID, flow.tableID, flow.flowID);
-            //System.err.println(str + "hahahaha");
+        }
+        availableFlowID.clear();
+    }
+
+    public void deleteAll() {
+        getUpdate();
+        for (FlowInfo flow : flowList) {
+            String str = connector.deleteFlow(flow.switchID, flow.tableID, flow.flowID);
         }
         availableFlowID.clear();
     }
@@ -280,7 +287,7 @@ public class FlowManager {
                     }
                     if (meterField != null) {
                         Integer meterID = meterField.getInt("meter-id");
-                        System.out.println(meterID.toString());
+                        //System.out.println(meterID.toString());
                         meter = meterManager.getMeter(switchID, meterID.toString());
                     }
                 }
