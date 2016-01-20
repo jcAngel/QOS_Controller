@@ -102,14 +102,20 @@ public class SimpleShare implements OptimizationInterface {
             if (relatedFlow.size() > 1)
                 realBand = linkBandWidth / (relatedFlow.size() - 1);
 
-            for (FlowInfo info : relatedFlow) {
-                System.out.println("Related Flow:" + info.srcIP + " - " + info.dstIP);
+            for (int infoIndex = 0; infoIndex < relatedFlow.size(); infoIndex++) {
+                FlowInfo info = relatedFlow.get(infoIndex);
+                System.out.println("Related Flow:" + info.srcIP + " - " + feature.srcIP);
+                System.out.println("Related Flow:" + info.dstIP + " - " + feature.dstIP);
                 if (info.srcIP.equals(feature.srcIP + "/32") && info.dstIP.equals(feature.dstIP + "/32")) {
                     result.addDeleteFlow(info);
-                    continue;
+                    relatedFlow.remove(infoIndex);
+                    break;
                 }
+            }
 
+            for (FlowInfo info : relatedFlow) {
                 MeterInfo meter = null;
+                System.out.println("Related Flow:" + info.srcIP + " - " + info.dstIP);
                 if (info.linkedMeter == null) {
                     meter = addMeter(node.switchNode.name, realBand);
                     info.setLinkedMeter(meter);

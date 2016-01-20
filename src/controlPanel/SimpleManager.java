@@ -38,12 +38,13 @@ public class SimpleManager implements MainManagerInterface {
 
     private void addFlow(BufferedReader br) throws Exception {
         String input = "";
-        System.out.println("Please input the flow which you want to add, input like A.B.C.D - X.Y.Z.W");
+        System.out.println("Please input the flow which you want to add, input like 192.168.0.1 - 127.0.0.1 - 5.0");
         input=br.readLine();
         input = input.replace(" ", "");
         String src = input.split("-")[0];
         String dst = input.split("-")[1];
-        FlowFeature feature = new FlowFeature(src, dst);
+        Double w = Double.parseDouble(input.split("-")[2]);
+        FlowFeature feature = new FlowFeature(src, dst, w);
         inventoryManager.getUpdate();
         NeedModifyList list = optManager.addNewFlow(feature);
         list.print();
@@ -60,7 +61,7 @@ public class SimpleManager implements MainManagerInterface {
     }
 
     private void deleteFlow(BufferedReader br) throws Exception {
-        System.out.println("Please Input the flow you want to delete, input like A.B.C.D - X.Y.Z.W");
+        System.out.println("Please Input the flow you want to delete, input like 192.168.0.1 - 127.0.0.1");
         String input=br.readLine();
         input = input.replace(" ", "");
         String src = input.split("-")[0];

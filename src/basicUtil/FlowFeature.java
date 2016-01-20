@@ -6,10 +6,18 @@ package basicUtil;
 public class FlowFeature {
     public String srcIP, dstIP;
     public int port;
+    public double weight;
+
+    public FlowFeature(String src, String dst, double w) {
+        srcIP = src;
+        dstIP = dst;
+        weight = w;
+    }
 
     public FlowFeature(String src, String dst) {
         srcIP = src;
         dstIP = dst;
+        weight = 1.0;
     }
 
     @Override
