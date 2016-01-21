@@ -9,4 +9,4 @@ The functions of this controller:
 	6. Clear all flows.
 	7. Delete a flow.
 
-Version: 1.0
+Version: 1.1
