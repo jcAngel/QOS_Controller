@@ -16,6 +16,7 @@ import java.util.HashSet;
 public class MeterManager {
     HashSet<MeterInfo> meterList;
     Connector connector;
+    final int startMeterID = 0;
 
     HashMap<String, Integer> availableMeterID;
 
@@ -23,18 +24,16 @@ public class MeterManager {
         meterList = new HashSet<>();
         availableMeterID = new HashMap<>();
         connector = new Connector();
-        //getUpdate();
     }
 
     public MeterManager(Connector connector) {
         meterList = new HashSet<>();
         availableMeterID = new HashMap<>();
         this.connector = connector;
-        //getUpdate();
     }
 
     public int getAvailableMeterID(String switchID) {
-        int x = 0;
+        int x = startMeterID;
         if (availableMeterID.containsKey(switchID)) x = availableMeterID.get(switchID);
         else availableMeterID.put(switchID, x);
         return x + 1;
@@ -42,7 +41,7 @@ public class MeterManager {
 
     public void updateAvailableMeterID(String switchID, String meterID) {
         int meter = Integer.parseInt(meterID);
-        int now = 0;
+        int now = startMeterID;
         if (availableMeterID.containsKey(switchID)) now = availableMeterID.get(switchID);
         else availableMeterID.put(switchID, now);
         if (meter > now) {
@@ -83,7 +82,6 @@ public class MeterManager {
                 JSONArray meterTables = node.getJSONArray("flow-node-inventory:meter");
                 for (int j = 0; j < meterTables.length(); j++) {
                     JSONObject meter = meterTables.getJSONObject(j);
-                    //System.out.println(meter.toString());
                     String meterID = meter.getInt("meter-id") + "";
                     int bandWidth = meter.getJSONObject("meter-band-headers")
                                          .getJSONArray("meter-band-header")
@@ -91,7 +89,6 @@ public class MeterManager {
                                          .getInt("drop-rate");
                     MeterInfo info = new MeterInfo(switchID + meterID, switchID, meterID, bandWidth);
                     meterList.add(info);
-                    //System.out.println(info.toString());
                 }
             }
         } catch (Exception e) {

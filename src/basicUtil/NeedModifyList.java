@@ -57,7 +57,7 @@ public class NeedModifyList {
     public void print() {
         int index = 0;
         for (FlowInfo info : modifyFlowList) {
-            System.out.println("Need Modify Flow " + (++index) + ":  {\n" +
+            System.out.println("Need Modify FlowEntry " + (++index) + ":  {\n" +
                                     "\tSwitch: " + info.switchID + "\n" +
                                     "\tSourceIP: " + info.srcIP + "\n" +
                                     "\tDestinationIP: " + info.dstIP + "\n" +
@@ -67,7 +67,7 @@ public class NeedModifyList {
 
         index = 0;
         for (MeterInfo info : meterList) {
-            System.out.println("Meter " + (++index) + ": {\n" +
+            System.out.println("MeterEntry " + (++index) + ": {\n" +
                                     "\tSwitch: " + info.switchID + "\n" +
                                     "\tMeterID: " + info.meterID + "\n" +
                                     "\tBandWidth:" + info.bandWidth + "\n}");
@@ -75,7 +75,7 @@ public class NeedModifyList {
 
         index = 0;
         for (FlowInfo info: deleteFlowList) {
-            System.out.println("Need Delete Flow " + (++index) + ":  {\n" +
+            System.out.println("Need Delete FlowEntry " + (++index) + ":  {\n" +
                                     "\tSwitch: " + info.switchID + "\n" +
                                     "\tSourceIP: " + info.srcIP + "\n" +
                                     "\tDestinationIP: " + info.dstIP + "\n" +

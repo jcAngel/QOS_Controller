@@ -24,14 +24,12 @@ public class FlowManager {
         flowList = new HashSet<FlowInfo>();
         availableFlowID = new HashMap<String, HashMap<String, Integer>>();
         connector = new Connector();
-        //getUpdate();
     }
 
     public FlowManager(Connector connector) {
         flowList = new HashSet<FlowInfo>();
         availableFlowID = new HashMap<String, HashMap<String, Integer>>();
         this.connector = connector;
-        //getUpdate();
     }
 
     public void setMeterManager(MeterManager meterManager) {
@@ -175,6 +173,8 @@ public class FlowManager {
             str[2] = Integer.toString(port.port);
             flow.setAction(0, actOrder++, str);
         }
+        str[2] = "CONTROLLER";
+        flow.setAction(0, actOrder, str);
 
         //System.out.println(flow.getXMLString());
         updateAvailableFlowID(switchID.name, tableID, flowID.toString());

@@ -16,7 +16,7 @@ public class SimpleShare implements OptimizationInterface {
     MainManagerInterface parent;
     HashMap<FlowFeature, Route> routeStore;
 
-    final int linkBandWidth = 200000;
+    final int linkBandWidth = BasicParam.linkBandWidth;
 
     public SimpleShare(MainManagerInterface parent) {
         this.parent = parent;
@@ -31,7 +31,9 @@ public class SimpleShare implements OptimizationInterface {
 
     @Override
     public NeedModifyList addNewFlow(FlowFeature feature) {
-        if (routeStore.containsKey(feature)) return new NeedModifyList();
+        if (routeStore.containsKey(feature)) {
+            return new NeedModifyList();
+        }
 
         Route route = findRoute(feature.srcIP, feature.dstIP);
 
@@ -97,15 +99,13 @@ public class SimpleShare implements OptimizationInterface {
                 System.err.println("Error: there is no related flow on " + outPort.container.name + ":" + outPort.port);
                 continue;
             }
-            //System.out.println(relatedFlow.size());
+
             int realBand = 0;
             if (relatedFlow.size() > 1)
                 realBand = linkBandWidth / (relatedFlow.size() - 1);
 
             for (int infoIndex = 0; infoIndex < relatedFlow.size(); infoIndex++) {
                 FlowInfo info = relatedFlow.get(infoIndex);
-                System.out.println("Related Flow:" + info.srcIP + " - " + feature.srcIP);
-                System.out.println("Related Flow:" + info.dstIP + " - " + feature.dstIP);
                 if (info.srcIP.equals(feature.srcIP + "/32") && info.dstIP.equals(feature.dstIP + "/32")) {
                     result.addDeleteFlow(info);
                     relatedFlow.remove(infoIndex);
@@ -115,7 +115,6 @@ public class SimpleShare implements OptimizationInterface {
 
             for (FlowInfo info : relatedFlow) {
                 MeterInfo meter = null;
-                System.out.println("Related Flow:" + info.srcIP + " - " + info.dstIP);
                 if (info.linkedMeter == null) {
                     meter = addMeter(node.switchNode.name, realBand);
                     info.setLinkedMeter(meter);
@@ -129,7 +128,7 @@ public class SimpleShare implements OptimizationInterface {
                 }
             }
         }
-
+        routeStore.remove(feature);
         return result;
     }
 
@@ -154,6 +153,13 @@ public class SimpleShare implements OptimizationInterface {
         return meter;
     }
 
+    /**
+     * Find a shortest path from src to dst.
+     * Algorithm: SPFA
+     * @param src source IP
+     * @param dst destination IP
+     * @return A path from src to dst.
+     */
     private Route findRoute(String src, String dst) {
         Route ans = new Route();
 

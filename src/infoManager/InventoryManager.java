@@ -81,7 +81,7 @@ public class InventoryManager {
     public Host getHost(String ip) { return hosts.get(ip); }
 
     public void getTopoUpdate() {
-        String str = connector.getFromURL("http://localhost:8181/restconf/operational/network-topology:network-topology/");
+        String str = connector.getFromURL(BasicParam.topoURL);
         try {
             JSONObject doc = new JSONObject(str);
             doc = doc.getJSONObject("network-topology");

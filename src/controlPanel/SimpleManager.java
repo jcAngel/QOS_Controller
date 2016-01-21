@@ -96,7 +96,7 @@ public class SimpleManager implements MainManagerInterface {
     private void printFlows(BufferedReader br) throws Exception {
         ArrayList<FlowInfo> flows = flowManager.getFlowList();
         for (int i = 0; i < flows.size(); i++) {
-            System.out.println("No. " + (i + 1) + " Flow Info: {");
+            System.out.println("No. " + (i + 1) + " Flow Entry: {");
             FlowInfo info = flows.get(i);
             System.out.println("\tSwitchID: " + info.switchID + ", TableID: " + info.tableID + ", FlowID: " + info.flowID);
             if (info.srcIP != null && info.srcIP.length() > 0)
@@ -143,7 +143,7 @@ public class SimpleManager implements MainManagerInterface {
                     meterManager.deleteAll();
                     clearAll();
                 }
-                else if (input.contains("7") || input.contains("delete flow")) {
+                else if (input.contains("7") || input.contains("delete one flow")) {
                     deleteFlow(br);
                 }
                 else {
@@ -184,10 +184,8 @@ public class SimpleManager implements MainManagerInterface {
             ArrayList<Switch> switches = inventoryManager.getSwitches();
             for (Switch switchid : switches) {
                 String realXML = deletexml.replace("switchID", "\"" + switchid.name + "\"");
-                String info = connector.postXMLToURL("http://127.0.0.1:8181/restconf/operations/sal-flow:remove-flow", realXML);
-                //System.out.println(addxml);
-                info = connector.putFlow(switchid.name, "0", "1", addxml);
-                //System.out.println(info);
+                connector.postXMLToURL(BasicParam.salRemoveFlowURL, realXML);
+                connector.putFlow(switchid.name, "0", "1", addxml);
             }
 
         }

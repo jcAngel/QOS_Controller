@@ -11,15 +11,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class Connector {
-    private String configURL = "http://127.0.0.1:8181/restconf/config/opendaylight-inventory:nodes/";
-    private String operationalURL = "http://127.0.0.1:8181/restconf/operational/opendaylight-inventory:nodes/";
+    private String configURL = BasicParam.configURL;
+    private String operationalURL = BasicParam.operationalURL;
     private String nodePostfix = "node/";
     private String tablePostfix = "table/";
     private String flowPostfix = "flow/";
     private String meterPostfix = "meter/";
 
-    private String user = "admin";
-    private String pwd = "admin";
+    private String user = BasicParam.user;
+    private String pwd = BasicParam.pwd;
 
     public String putFlow(String switchid, String tableid, String flowid, String xml) {
         String s = configURL + nodePostfix + switchid + "/" + tablePostfix + tableid + "/" + flowPostfix + flowid;
