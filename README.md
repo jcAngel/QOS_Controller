@@ -8,5 +8,6 @@ The functions of this controller:
 	5. Print all flows.
 	6. Clear all flows.
 	7. Delete a flow.
+	8. Statistics
 
-Version: 1.1
+Version: 1.2
