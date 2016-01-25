@@ -6,6 +6,7 @@ import basicUtil.*;
 import infoManager.FlowManager;
 import infoManager.InventoryManager;
 import infoManager.MeterManager;
+import infoManager.StatisticManager;
 import optimizationAlgorithm.SimpleShare;
 
 import java.io.BufferedReader;
@@ -19,6 +20,7 @@ public class SimpleManager implements MainManagerInterface {
     InventoryManager inventoryManager;
     FlowManager flowManager;
     MeterManager meterManager;
+    StatisticManager statisticManager;
     SimpleShare optManager;
 
     public SimpleManager() {
@@ -27,9 +29,8 @@ public class SimpleManager implements MainManagerInterface {
         meterManager = new MeterManager(connector);
         flowManager = new FlowManager(connector);
         flowManager.setMeterManager(meterManager);
+        statisticManager = new StatisticManager(connector, flowManager, meterManager);
         clearAll();
-        //flowManager.deleteAllExceptDefault();
-        //meterManager.deleteAll();
 
         optManager = new SimpleShare(this);
 
@@ -125,6 +126,7 @@ public class SimpleManager implements MainManagerInterface {
                 System.out.println("\t5. Print all flows");
                 System.out.println("\t6. Clear all flows");
                 System.out.println("\t7. Delete flow");
+                System.out.println("\t8. Statistics");
                 input = br.readLine();
                 if (input == null) break;
                 input = input.toLowerCase();
@@ -145,6 +147,9 @@ public class SimpleManager implements MainManagerInterface {
                 }
                 else if (input.contains("7") || input.contains("delete one flow")) {
                     deleteFlow(br);
+                }
+                else if (input.contains("8") || input.contains("statistics")) {
+                    statisticManager.printStatistics();
                 }
                 else {
                     System.err.println("Operation cannot supported.");

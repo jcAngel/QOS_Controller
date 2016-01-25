@@ -56,21 +56,21 @@ public class NeedModifyList {
 
     public void print() {
         int index = 0;
-        for (FlowInfo info : modifyFlowList) {
-            System.out.println("Need Modify FlowEntry " + (++index) + ":  {\n" +
-                                    "\tSwitch: " + info.switchID + "\n" +
-                                    "\tSourceIP: " + info.srcIP + "\n" +
-                                    "\tDestinationIP: " + info.dstIP + "\n" +
-                                    "\tTable: " + info.tableID + ",  flowID: " + info.flowID + "\n" +
-                                    "\tMeter: " + info.linkedMeter.meterID + "\n}");
+        for (MeterInfo info : meterList) {
+            System.out.println("Need Modify MeterEntry " + (++index) + ": {\n" +
+                    "\tSwitch: " + info.switchID + "\n" +
+                    "\tMeterID: " + info.meterID + "\n" +
+                    "\tBandWidth:" + info.bandWidth + "\n}");
         }
 
         index = 0;
-        for (MeterInfo info : meterList) {
-            System.out.println("MeterEntry " + (++index) + ": {\n" +
-                                    "\tSwitch: " + info.switchID + "\n" +
-                                    "\tMeterID: " + info.meterID + "\n" +
-                                    "\tBandWidth:" + info.bandWidth + "\n}");
+        for (FlowInfo info : modifyFlowList) {
+            System.out.println("Need Modify FlowEntry " + (++index) + ":  {\n" +
+                    "\tSwitch: " + info.switchID + "\n" +
+                    "\tSourceIP: " + info.srcIP + "\n" +
+                    "\tDestinationIP: " + info.dstIP + "\n" +
+                    "\tTable: " + info.tableID + ",  flowID: " + info.flowID + "\n" +
+                    "\tMeter: " + info.linkedMeter.meterID + "\n}");
         }
 
         index = 0;

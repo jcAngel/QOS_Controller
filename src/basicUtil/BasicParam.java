@@ -12,4 +12,6 @@ public class BasicParam {
     public static String salRemoveFlowURL = controllerIP + "restconf/operations/sal-flow:remove-flow";
     public static String user = "admin";
     public static String pwd = "admin";
+    public static String flowStatisticURL = operationalURL + "node/{switchID}/flow-node-inventory:table/{tableID}/flow/{flowID}/opendaylight-flow-statistics:flow-statistics";
+    public static String meterStatisticURL = operationalURL + "node/{switchID}/flow-node-inventory:meter/{meterID}/opendaylight-meter-statistics:meter-statistics/";
 }

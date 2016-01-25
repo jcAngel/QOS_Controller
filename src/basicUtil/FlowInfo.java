@@ -9,7 +9,7 @@ public class FlowInfo {
     public String switchID, name;
     public String flowID;
     public String tableID;
-    public String srcIP, dstIP;
+    public String srcIP, dstIP, srcPort, dstPort;
     public ArrayList<String> outPorts;
     public int priority, ethType;
     public MeterInfo linkedMeter;
@@ -26,6 +26,22 @@ public class FlowInfo {
         outPorts = out;
         name = src + "To" + dst;
         this.ethType = ethType;
+    }
+
+    public void setSourcePort(String srcPort) {
+        this.srcPort = srcPort;
+    }
+
+    public void setDestinationPort(String dstPort) {
+        this.dstPort = dstPort;
+    }
+
+    public String getSourcePort() {
+        return srcPort;
+    }
+
+    public String getDestinationPort() {
+        return dstPort;
     }
 
     public void setLinkedMeter(MeterInfo meter) {
@@ -51,5 +67,11 @@ public class FlowInfo {
             return true;
         }
         else return false;
+    }
+
+    @Override
+    public int hashCode() {
+        String ans = switchID + "/flow:" + tableID + "-" + flowID;
+        return ans.hashCode();
     }
 }

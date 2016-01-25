@@ -30,4 +30,10 @@ public class MeterInfo {
         }
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        String ans = switchID + "/meter:" + meterID;
+        return ans.hashCode();
+    }
 }
