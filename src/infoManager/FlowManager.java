@@ -203,7 +203,7 @@ public class FlowManager {
                             info = getFlowInfo(flow, switchID, tableID);
                         } catch (Exception e) {
                             //e.printStackTrace();
-                            System.err.println("Cannot analyze flow:" + flow + " ------ FlowManager");
+                            //System.err.println("Cannot analyze flow:" + flow + " ------ FlowManager");
                         }
                         if (info != null) {
                             flowList.add(info);
@@ -213,7 +213,7 @@ public class FlowManager {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Cannot analyze JSON string: " + str);
+            //System.err.println("Cannot analyze JSON string: " + str);
         }
 
     }
@@ -252,14 +252,14 @@ public class FlowManager {
             srcIP = matchField.getString("ipv4-source");
             dstIP = matchField.getString("ipv4-destination");
         } catch (Exception e) {
-            System.err.println("This flow is not a ipv4 flow. ------- FlowManager");
+            //System.err.println("This flow is not a ipv4 flow. ------- FlowManager");
         }
 
         int ethType = -1;
         try {
             ethType = matchField.getJSONObject("ethernet-match").getJSONObject("ethernet-type").getInt("type");
         } catch (Exception e) {
-            System.err.println("This flow does not have ethType ------ FlowManager");
+            //System.err.println("This flow does not have ethType ------ FlowManager");
         }
 
         ArrayList<String> outPorts = new ArrayList<String>();
@@ -283,7 +283,7 @@ public class FlowManager {
                     try {
                         meterField = tmp.getJSONObject("meter");
                     } catch (Exception es) {
-                        System.err.println("This action does not have output port and meter ------ FlowManager");
+                        //System.err.println("This action does not have output port and meter ------ FlowManager");
                     }
                     if (meterField != null) {
                         Integer meterID = meterField.getInt("meter-id");
