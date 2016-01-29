@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<meter xmlns="urn:opendaylight:flow:inventory">
+	<meter-name>justatest</meter-name>
+
+	<meter-id>3</meter-id>
+	<flags>meter-kbps</flags>
+	<meter-band-headers>
+		<meter-band-header>
+			<band-id>0</band-id>
+			<meter-band-types>
+				<flags>ofpmbt-drop</flags>
+			</meter-band-types>
+			<drop-rate>25000</drop-rate>
+			<drop-burst-size>10000</drop-burst-size>
+		</meter-band-header>
+	</meter-band-headers></meter>
